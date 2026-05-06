@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>beep</title>
+  <meta name="description" content="Minimalist sport timer. Stopwatch, Tabata, EMOM and custom workouts.">
+  <meta name="theme-color" content="#000000" id="themeColor">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="beep">
+  <link rel="manifest" href="manifest.json">
+  <script defer src="https://tang.julienlrvr.com/script.js" data-website-id="ac4ffdd3-89b3-4ba8-8251-f9fbc76d276e"></script>
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header id="mainHeader" class="hidden">
+<button class="nav-back" onclick="app.goHome()">&larr;</button>
+<div class="nav-title" id="navTitle">Timer</div>
+<div class="nav-spacer"></div>
+</header>
+
+<!-- HOME -->
+<section id="homeView" class="view active">
+<div class="home-top">
+  <button class="burger" id="homeBurger" onclick="app.toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+<div class="menu-drawer" id="menuDrawer">
+  <div class="menu-backdrop" onclick="app.toggleMenu()"></div>
+  <div class="menu-sheet">
+    <div class="menu-item">
+      <span>Dark mode</span>
+      <label class="switch">
+        <input type="checkbox" id="darkModeToggle" checked onchange="app.toggleTheme()">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <a class="menu-link" href="https://github.com/jjllrrvvrr/beep" target="_blank" rel="noopener noreferrer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+    </a>
+  </div>
+</div>
+<div class="home-content">
+  <h1 class="home-title">beep<span class="beep-pulse"></span></h1>
+<div class="mode-grid">
+<div class="mode-card" onclick="app.openMode('chrono')">
+<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+<h2>Stopwatch</h2><p>Just let it run</p>
+</div>
+<div class="mode-card" onclick="app.openMode('countdown')">
+<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+<h2>Countdown</h2><p>Set time and go</p>
+</div>
+<div class="mode-card" onclick="app.openMode('round')">
+<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h2l2-6 4 12 4-6 2 4h2"/></svg></div>
+<h2>Rounds</h2><p>Fixed time each round</p>
+</div>
+<div class="mode-card" onclick="app.openMode('tabata')">
+<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+<h2>Tabata</h2><p>Intervals done right</p>
+</div>
+<div class="mode-card" onclick="app.openMode('emom')">
+<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg></div>
+<h2>EMOM</h2><p>Every Minute On the Minute</p>
+</div>
+<div class="mode-card" onclick="app.openMode('complex')">
+<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+<h2>Complex</h2><p>Build your own workout</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- STOPWATCH -->
+<section id="chronoView" class="view">
+<div class="config-screen" id="chronoConfig">
+<div class="config-body" style="justify-content:center;display:flex;flex-direction:column;align-items:center;min-height:30vh;">
+<p class="config-desc">Tap start and let it roll.</p>
+</div>
+<div class="config-actions"><button class="btn-primary" onclick="app.chrono.start()">Start</button></div>
+</div>
+<div class="timer-screen hidden" id="chronoTimer">
+<div class="timer-top"></div>
+<div class="phase-badge">Stopwatch</div>
+<div class="timer-display-xl" id="chronoDisplay">00:00.00</div>
+<div class="progress-bar"><div class="progress-fill" id="chronoProgress"></div></div>
+  <div class="timer-meta" id="chronoMeta"><span>--</span><span>--</span></div>
+<div class="timer-actions">
+<button class="btn-circle" onclick="app.chrono.reset()">Reset</button>
+<button class="btn-main" id="chronoStartBtn" onclick="app.chrono.toggle()">Start</button>
+<button class="btn-circle" id="chronoLapBtn" onclick="app.chrono.lap()">Lap</button>
+</div>
+<div class="laps-list" id="chronoLaps"></div>
+</div>
+</section>
+
+<!-- COUNTDOWN -->
+<section id="countdownView" class="view">
+<div class="config-screen" id="countdownConfig">
+<div class="config-body">
+<div class="field-row"><label>Time</label><div class="time-inputs"><input type="number" id="cdMin" value="2" min="0" max="59"><span>:</span><input type="number" id="cdSec" value="0" min="0" max="59"></div></div>
+<p class="config-desc">Counts down to zero. Perfect for planks, holds, and timed exercises.</p>
+</div>
+<div class="config-actions"><button class="btn-primary" onclick="app.countdown.startFromConfig()">Start</button></div>
+</div>
+<div class="timer-screen hidden" id="countdownTimer">
+<div class="timer-top"></div>
+<div class="phase-badge" id="cdPhase">Remaining</div>
+<div class="timer-display-xl" id="cdDisplay">02:00</div>
+<div class="progress-bar"><div class="progress-fill" id="cdProgress"></div></div>
+<div class="timer-meta"><span id="cdMeta">02:00 / 02:00</span></div>
+<div class="timer-actions">
+<button class="btn-circle" onclick="app.countdown.reset()">Reset</button>
+<button class="btn-main" id="cdPauseBtn" onclick="app.countdown.toggle()">Start</button>
+</div>
+</div>
+</section>
+
+<!-- ROUNDS -->
+<section id="roundView" class="view">
+<div class="config-screen" id="roundConfig">
+<div class="config-body">
+<div class="field-row"><label>Rounds</label><input type="number" id="roundCount" value="5" min="1" max="99"></div>
+<div class="field-row"><label>Duration</label><div class="time-inputs"><input type="number" id="roundDurMin" value="3" min="0" max="59"><span>:</span><input type="number" id="roundDurSec" value="0" min="1" max="59"></div></div>
+<div class="field-row"><label>Rest</label><div class="time-inputs"><input type="number" id="roundRestMin" value="1" min="0" max="59"><span>:</span><input type="number" id="roundRestSec" value="0" min="0" max="59"></div></div>
+<p class="config-desc">Each round has the same duration. Rest between rounds is optional.</p>
+<p class="config-total" id="roundTotal">Total: ~15 min</p>
+</div>
+<div class="config-actions"><button class="btn-primary" onclick="app.round.startFromConfig()">Start</button></div>
+</div>
+<div class="timer-screen hidden" id="roundTimer">
+<div class="timer-top"></div>
+<div class="phase-badge" id="roundPhase">Round 1</div>
+<div class="timer-display-xl" id="roundDisplay">03:00</div>
+<div class="progress-bar"><div class="progress-fill" id="roundProgress"></div></div>
+<div class="timer-meta"><span id="roundCurrent">1 / 5</span><span id="roundTotalTime">00:00 / 15:00</span></div>
+<div class="timer-actions">
+<button class="btn-circle" onclick="app.round.reset()">Reset</button>
+<button class="btn-main" id="roundPauseBtn" onclick="app.round.toggle()">Start</button>
+</div>
+</div>
+</section>
+
+<!-- TABATA -->
+<section id="tabataView" class="view">
+<div class="config-screen" id="tabataConfig">
+<div class="config-body">
+<div class="field-row"><label>Work</label><div class="time-inputs"><input type="number" id="tabWorkMin" value="0" min="0" max="59"><span>:</span><input type="number" id="tabWorkSec" value="20" min="1" max="59"></div></div>
+<div class="field-row"><label>Rest</label><div class="time-inputs"><input type="number" id="tabRestMin" value="0" min="0" max="59"><span>:</span><input type="number" id="tabRestSec" value="10" min="1" max="59"></div></div>
+<div class="field-row"><label>Rounds</label><input type="number" id="tabRounds" value="8" min="1" max="99"></div>
+<div class="field-row"><label>Countdown</label><input type="number" id="tabCountdown" value="5" min="0" max="30"></div>
+<div class="field-row"><label>Repeat</label><label class="switch"><input type="checkbox" id="tabRepeatToggle"><span class="slider"></span></label></div>
+<div class="repeat-options hidden" id="tabRepeatOptions">
+<div class="field-row"><label>Count</label><input type="number" id="tabRepeatCount" value="3" min="2" max="20"></div>
+<div class="field-row"><label>Rest between</label><div class="time-inputs"><input type="number" id="tabSeriesRestMin" value="1" min="0" max="59"><span>:</span><input type="number" id="tabSeriesRestSec" value="0" min="0" max="59"></div></div>
+</div>
+<p class="config-total" id="tabTotal">Total: ~4 min</p>
+</div>
+<div class="config-actions"><button class="btn-primary" onclick="app.tabata.startFromConfig()">Start</button></div>
+</div>
+<div class="timer-screen hidden" id="tabataTimer">
+<div class="timer-top"></div>
+<div class="phase-badge" id="tabPhase">Ready</div>
+<div class="timer-display-xl" id="tabDisplay">00:20</div>
+<div class="progress-bar"><div class="progress-fill" id="tabProgress"></div></div>
+<div class="timer-meta"><span id="tabRound">Round 1/8</span><span id="tabSeriesDisplay">Cycle 1/1</span></div>
+<div class="timer-actions">
+<button class="btn-circle" onclick="app.tabata.reset()">Reset</button>
+<button class="btn-main" id="tabPauseBtn" onclick="app.tabata.toggle()">Start</button>
+</div>
+</div>
+</section>
+
+<!-- EMOM -->
+<section id="emomView" class="view">
+<div class="config-screen" id="emomConfig">
+<div class="config-body">
+<div class="field-row"><label>Minutes</label><input type="number" id="emomMinutes" value="10" min="1" max="60"></div>
+<div class="field-row"><label>Countdown</label><input type="number" id="emomCountdown" value="5" min="0" max="30"></div>
+<p class="config-desc">One round every 60 seconds.</p>
+<p class="config-total" id="emomTotal">Total: 10 min</p>
+</div>
+<div class="config-actions"><button class="btn-primary" onclick="app.emom.startFromConfig()">Start</button></div>
+</div>
+<div class="timer-screen hidden" id="emomTimer">
+<div class="timer-top"></div>
+<div class="phase-badge" id="emomPhase">Round 1</div>
+<div class="timer-display-xl" id="emomDisplay">60</div>
+<div class="progress-bar"><div class="progress-fill" id="emomProgress"></div></div>
+<div class="timer-meta"><span id="emomRound">1 / 10</span><span id="emomTotalTime">00:00 / 10:00</span></div>
+<div class="timer-actions">
+<button class="btn-circle" onclick="app.emom.reset()">Reset</button>
+<button class="btn-main" id="emomPauseBtn" onclick="app.emom.toggle()">Start</button>
+</div>
+</div>
+</section>
+
+<!-- COMPLEX -->
+<section id="complexView" class="view">
+<div class="config-screen" id="complexConfig">
+<div class="config-body">
+<div class="complex-list" id="complexList"></div>
+<div class="field-row"><label>Countdown</label><input type="number" id="complexCountdown" value="5" min="0" max="30"></div>
+<button class="btn-add-step" onclick="app.complex.addStepUI()">+ Add a step</button>
+</div>
+<div class="config-actions dual">
+<button class="btn-ghost" onclick="app.complex.clearAll()">Clear all</button>
+<button class="btn-primary" onclick="app.complex.startFromConfig()">Start</button>
+</div>
+</div>
+<div class="timer-screen hidden" id="complexTimer">
+<div class="timer-top timeline-wrap" id="complexTimelineWrap">
+<div class="timeline" id="complexTimeline"></div>
+</div>
+<div class="phase-badge" id="complexPhase">Ready</div>
+<div class="timer-display-xl" id="complexDisplay">00:00</div>
+<div class="progress-bar"><div class="progress-fill" id="complexProgress"></div></div>
+<div class="timer-meta"><span id="complexStep">Step 1 / 1</span><span id="complexTotalTime">00:00 / 00:00</span></div>
+<div class="timer-actions">
+<button class="btn-circle" onclick="app.complex.reset()">Reset</button>
+<button class="btn-main" id="complexPauseBtn" onclick="app.complex.toggle()">Start</button>
+</div>
+<div class="next-up" id="complexNext"></div>
+</div>
+</section>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+<script src="app.js"></script>
+</body>
+</html>
