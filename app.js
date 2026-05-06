@@ -107,7 +107,39 @@ class StopwatchTimer {
   start() {
     this.configEl.classList.add('hidden');
     this.timerEl.classList.remove('hidden');
-    this.toggle();
+    const cdOn = document.getElementById('chronoCountdownToggle')?.checked || false;
+    const cdSec = parseInt(document.getElementById('chronoCountdownSec')?.value || 0);
+    if (cdOn && cdSec > 0) {
+      this.countdown = cdSec;
+      this.phase = 'countdown';
+      this.timeLeft = cdSec;
+      this.engine = new TimerEngine(() => this.tickCd(), () => {});
+      this.updateCdUI();
+      this.engine.start();
+    } else {
+      this.toggle();
+    }
+  }
+
+  tickCd() {
+    this.timeLeft--;
+    if (this.timeLeft <= 3 && this.timeLeft > 0) playTick();
+    if (this.timeLeft <= 0) {
+      this.engine.stop();
+      this.phase = 'running';
+      this.toggle();
+      return true;
+    }
+    this.updateCdUI();
+    return false;
+  }
+
+  updateCdUI() {
+    this.display.textContent = fmtTime(this.timeLeft);
+    document.querySelector('#chronoTimer .phase-badge').textContent = 'Get ready';
+    document.querySelector('#chronoTimer .phase-badge').className = 'phase-badge countdown';
+    if (this.timeLeft <= 3 && this.timeLeft > 0) this.display.classList.add('pulsing');
+    else this.display.classList.remove('pulsing');
   }
 
   tick = () => {
@@ -177,31 +209,52 @@ class CountdownTimer {
     this.totalDuration = (parseInt(document.getElementById('cdMin').value || 0) * 60) + parseInt(document.getElementById('cdSec').value || 0);
     if (this.totalDuration <= 0) { alert('Set a time > 0'); return; }
 
-    this.timeLeft = this.totalDuration;
-    this.elapsed = 0;
+    const cdOn = document.getElementById('cdCountdownToggle')?.checked || false;
+    const cdSec = parseInt(document.getElementById('cdCountdownSec')?.value || 0);
 
     this.configEl.classList.add('hidden');
     this.timerEl.classList.remove('hidden');
-    this.updateUI();
-    this.engine.start();
+
+    if (cdOn && cdSec > 0) {
+      this.countdown = cdSec;
+      this.phase = 'countdown';
+      this.timeLeft = cdSec;
+      this.updateUI();
+      this.engine.start();
+    } else {
+      this.timeLeft = this.totalDuration;
+      this.elapsed = 0;
+      this.phase = 'active';
+      this.updateUI();
+      this.engine.start();
+    }
   }
 
   tick() {
     this.timeLeft--;
-    this.elapsed++;
 
     if (this.timeLeft <= 3 && this.timeLeft > 0) playTick();
+
     if (this.timeLeft <= 0) {
-      this.timeLeft = 0;
-      this.updateUI();
-      return true;
+      if (this.phase === 'countdown') {
+        this.phase = 'active';
+        this.timeLeft = this.totalDuration;
+        this.elapsed = 0;
+        playBell();
+      } else {
+        this.timeLeft = 0;
+        this.updateUI();
+        return true;
+      }
+    } else {
+      if (this.phase !== 'countdown') this.elapsed++;
     }
     this.updateUI();
     return false;
   }
 
   updateUI() {
-    const done = this.timeLeft <= 0 && this.elapsed > 0;
+    const done = this.timeLeft <= 0 && this.elapsed > 0 && this.phase !== 'countdown';
     if (done) {
       this.phaseEl.textContent = 'Done';
       this.phaseEl.className = 'phase-badge';
@@ -213,6 +266,20 @@ class CountdownTimer {
       this.pauseBtn.textContent = 'Start';
       this.pauseBtn.classList.remove('paused');
       this.displayEl.classList.remove('pulsing');
+      return;
+    }
+
+    if (this.phase === 'countdown') {
+      this.phaseEl.textContent = 'Get ready';
+      this.phaseEl.className = 'phase-badge countdown';
+      this.displayEl.textContent = this.timeLeft;
+      this.displayEl.style.color = 'var(--yellow)';
+      const pct = this.countdown > 0 ? ((this.countdown - this.timeLeft) / this.countdown) * 100 : 0;
+      this.progressEl.style.width = `${pct}%`;
+      this.progressEl.style.background = 'var(--yellow)';
+      this.metaEl.textContent = '-';
+      this.displayEl.classList.add('pulsing');
+      this.pauseBtn.textContent = this.engine.running ? 'Pause' : 'Resume';
       return;
     }
 
@@ -297,26 +364,44 @@ class RoundTimer {
 
     if (this.roundDuration <= 0) { alert('Round duration must be > 0'); return; }
 
-    this.currentRound = 1;
-    this.elapsed = 0;
-    this.phase = 'round';
-    this.timeLeft = this.roundDuration;
-    this.totalDuration = (this.roundDuration * this.roundCount) + (this.restDuration * (this.roundCount - 1));
+    const cdOn = document.getElementById('roundCountdownToggle')?.checked || false;
+    const cdSec = parseInt(document.getElementById('roundCountdownSec')?.value || 0);
 
     this.configEl.classList.add('hidden');
     this.timerEl.classList.remove('hidden');
-    this.updateUI();
-    this.engine.start();
+
+    if (cdOn && cdSec > 0) {
+      this.countdown = cdSec;
+      this.phase = 'countdown';
+      this.timeLeft = cdSec;
+      this.totalDuration = (this.roundDuration * this.roundCount) + (this.restDuration * (this.roundCount - 1));
+      this.elapsed = 0;
+      this.updateUI();
+      this.engine.start();
+    } else {
+      this.currentRound = 1;
+      this.elapsed = 0;
+      this.phase = 'round';
+      this.timeLeft = this.roundDuration;
+      this.totalDuration = (this.roundDuration * this.roundCount) + (this.restDuration * (this.roundCount - 1));
+      this.updateUI();
+      this.engine.start();
+    }
   }
 
   tick() {
     this.timeLeft--;
-    this.elapsed++;
 
     if (this.timeLeft <= 3 && this.timeLeft > 0) playTick();
 
     if (this.timeLeft <= 0) {
-      if (this.phase === 'round') {
+      if (this.phase === 'countdown') {
+        this.currentRound = 1;
+        this.elapsed = 0;
+        this.phase = 'round';
+        this.timeLeft = this.roundDuration;
+        playBell();
+      } else if (this.phase === 'round') {
         if (this.currentRound >= this.roundCount) {
           this.phase = 'done';
           this.timeLeft = 0;
@@ -338,6 +423,8 @@ class RoundTimer {
         this.timeLeft = this.roundDuration;
         playBell();
       }
+    } else {
+      if (this.phase !== 'countdown') this.elapsed++;
     }
     this.updateUI();
     return this.phase === 'done';
@@ -356,6 +443,21 @@ class RoundTimer {
       this.pauseBtn.textContent = 'Start';
       this.pauseBtn.classList.remove('paused');
       this.displayEl.classList.remove('pulsing');
+      return;
+    }
+
+    if (this.phase === 'countdown') {
+      this.phaseEl.textContent = 'Get ready';
+      this.phaseEl.className = 'phase-badge countdown';
+      this.displayEl.textContent = this.timeLeft;
+      this.displayEl.style.color = 'var(--yellow)';
+      const pct = this.countdown > 0 ? ((this.countdown - this.timeLeft) / this.countdown) * 100 : 0;
+      this.progressEl.style.width = `${pct}%`;
+      this.progressEl.style.background = 'var(--yellow)';
+      this.currentEl.textContent = '-';
+      this.totalEl.textContent = '-';
+      this.displayEl.classList.add('pulsing');
+      this.pauseBtn.textContent = this.engine.running ? 'Pause' : 'Resume';
       return;
     }
 
@@ -451,7 +553,7 @@ class TabataTimer {
     this.workTime = (parseInt(document.getElementById('tabWorkMin').value) * 60) + parseInt(document.getElementById('tabWorkSec').value);
     this.restTime = (parseInt(document.getElementById('tabRestMin').value) * 60) + parseInt(document.getElementById('tabRestSec').value);
     this.rounds = parseInt(document.getElementById('tabRounds').value);
-    this.countdown = parseInt(document.getElementById('tabCountdown').value) || 0;
+    this.countdown = (document.getElementById('tabCountdownToggle')?.checked ? parseInt(document.getElementById('tabCountdownSec')?.value || 0) : 0);
     const repeatOn = document.getElementById('tabRepeatToggle')?.checked || false;
     this.series = repeatOn ? parseInt(document.getElementById('tabRepeatCount').value) : 1;
     this.seriesRest = repeatOn ? ((parseInt(document.getElementById('tabSeriesRestMin').value) * 60) + parseInt(document.getElementById('tabSeriesRestSec').value)) : 0;
@@ -629,7 +731,7 @@ class EmomTimer {
     this.minutes = parseInt(document.getElementById('emomMinutes').value);
     if (this.minutes <= 0) { alert('At least 1 minute'); return; }
     this.totalTime = this.minutes * 60;
-    this.countdown = parseInt(document.getElementById('emomCountdown').value) || 0;
+    this.countdown = (document.getElementById('emomCountdownToggle')?.checked ? parseInt(document.getElementById('emomCountdownSec')?.value || 0) : 0);
 
     this.configEl.classList.add('hidden');
     this.timerEl.classList.remove('hidden');
@@ -865,7 +967,7 @@ class ComplexTimer {
 
   startFromConfig() {
     if (this.steps.length === 0) { alert('Add at least one step'); return; }
-    this.countdown = parseInt(document.getElementById('complexCountdown').value) || 0;
+    this.countdown = (document.getElementById('complexCountdownToggle')?.checked ? parseInt(document.getElementById('complexCountdownSec')?.value || 0) : 0);
     this.currentStep = 0;
     this.elapsed = 0;
     this.totalDuration = this.steps.reduce((a, s) => a + s.duration, 0);

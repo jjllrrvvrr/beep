@@ -1,3 +1,14 @@
+/**
+ * beep — Sport Timer
+ * https://github.com/jjllrrvvrr/beep
+ *
+ * Palette: #2DC799 | #FCBF16 | #BB0D3D | #FCF5F7 | #000000
+ * Fonts: Archivo Black (logo), Inter (body)
+ */
+
+/* =============================================
+   DESIGN TOKENS
+   ============================================= */
 :root {
   --black: #000000;
   --white: #FCF5F7;
@@ -9,7 +20,14 @@
   --muted: #888888;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* =============================================
+   RESET & BASE
+   ============================================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 html, body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -24,103 +42,11 @@ html, body {
   transition: background .3s, color .3s;
 }
 
-html[data-theme="light"] {
-  --black: #ffffff;
-  --white: #111111;
-  --card: #f5f5f5;
-  --border: #e0e0e0;
-  --muted: #777777;
-  --surface: #fafafa;
-}
-
-html[data-theme="light"] header {
-  background: rgba(255,255,255,0.9);
-  border-bottom: 1px solid var(--border);
-}
-
-html[data-theme="light"] .switch .slider {
-  background: #cccccc;
-  border-color: #cccccc;
-}
-html[data-theme="light"] .switch .slider:before {
-  background: #ffffff;
-}
-html[data-theme="light"] input:checked + .slider {
-  background: var(--green);
-  border-color: var(--green);
-}
-html[data-theme="light"] input:checked + .slider:before {
-  background: #ffffff;
-}
-
-html[data-theme="light"] .nav-back {
-  color: var(--white);
-}
-
-html[data-theme="light"] .mode-card {
-  background: var(--card);
-  border-color: var(--border);
-}
-
-html[data-theme="light"] .step-card {
-  background: #eeeeee;
-  border-color: var(--border);
-}
-html[data-theme="light"] .step-card-header input,
-html[data-theme="light"] .step-type-select,
-html[data-theme="light"] .step-card-body input {
-  background: #e0e0e0;
-  color: var(--white);
-  border-color: #cccccc;
-}
-
-html[data-theme="light"] .repeat-options {
-  background: #eeeeee;
-  border-color: var(--border);
-}
-
-html[data-theme="light"] .step-action-btn {
-  background: #e0e0e0;
-  color: var(--muted);
-}
-
-html[data-theme="light"] .btn-circle {
-  background: var(--card);
-  color: var(--white);
-  border-color: var(--border);
-}
-
-html[data-theme="light"] .btn-ghost {
-  background: transparent;
-  color: var(--white);
-  border-color: var(--border);
-}
-
-html[data-theme="light"] .btn-ghost:hover {
-  background: var(--card);
-}
-
-html[data-theme="light"] .btn-add-step {
-  color: var(--muted);
-  border-color: var(--border);
-}
-html[data-theme="light"] .btn-add-step:hover {
-  border-color: var(--green);
-  color: var(--green);
-}
-
-html[data-theme="light"] .timeline-item {
-  background: #eeeeee;
-  border-color: var(--border);
-}
-
-html[data-theme="light"] .laps-list .lap-row {
-  border-bottom-color: var(--border);
-}
-
 .hidden { display: none !important; }
 
-/* ================= VIEWS ================= */
+/* =============================================
+   LAYOUT — Views
+   ============================================= */
 .view {
   display: none;
   height: 100%;
@@ -128,14 +54,19 @@ html[data-theme="light"] .laps-list .lap-row {
   overflow-y: auto;
   overflow-x: hidden;
 }
+
 .view.active { display: block; }
 
-/* ================= HEADER ================= */
+/* =============================================
+   LAYOUT — Header
+   ============================================= */
 header {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 56px;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
@@ -151,13 +82,15 @@ header {
   color: var(--white);
   font-size: 1.4rem;
   cursor: pointer;
-  width: 40px; height: 40px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
   transition: background .15s;
 }
+
 .nav-back:hover { background: var(--card); }
 
 .nav-title {
@@ -169,7 +102,9 @@ header {
 
 .nav-spacer { width: 40px; }
 
-/* ================= BURGER MENU ================= */
+/* =============================================
+   LAYOUT — Home
+   ============================================= */
 .home-top {
   position: fixed;
   top: 16px;
@@ -177,121 +112,6 @@ header {
   z-index: 300;
 }
 
-.burger {
-  width: 48px;
-  height: 48px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  position: relative;
-  cursor: pointer;
-  transition: background .2s, border-color .2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.burger:hover { border-color: var(--muted); }
-.burger.open { background: var(--black); border-color: var(--border); }
-html[data-theme="light"] .burger.open { background: #ffffff; border-color: #cccccc; }
-
-.burger span {
-  position: absolute;
-  display: block;
-  width: 20px;
-  height: 2px;
-  background: var(--white);
-  border-radius: 2px;
-  transition: transform .3s ease, opacity .3s ease, top .3s ease, background .3s;
-}
-.burger span:nth-child(1) { top: 17px; left: 14px; }
-.burger span:nth-child(2) { top: 23px; left: 14px; }
-.burger span:nth-child(3) { top: 29px; left: 14px; }
-
-.burger.open span:nth-child(1) {
-  top: 23px;
-  transform: rotate(45deg);
-}
-.burger.open span:nth-child(2) {
-  opacity: 0;
-  transform: translateX(-4px);
-}
-.burger.open span:nth-child(3) {
-  top: 23px;
-  transform: rotate(-45deg);
-}
-
-.menu-drawer {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: flex-start;
-  pointer-events: none;
-  overflow: hidden;
-  padding: 0;
-}
-.menu-drawer.open { pointer-events: auto; }
-
-.menu-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  opacity: 0;
-  transition: opacity .3s ease;
-}
-.menu-drawer.open .menu-backdrop { opacity: 1; }
-
-.menu-sheet {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  overflow-y: auto;
-  width: min(300px, 80vw);
-  background: var(--card);
-  border-left: 1px solid var(--border);
-  border-radius: 0 0 0 0;
-  padding: 80px 20px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  transform: translateX(100%);
-  transition: transform .3s cubic-bezier(0.16, 1, 0.3, 1);
-  pointer-events: auto;
-}
-.menu-drawer.open .menu-sheet { transform: translateX(0); }
-
-html[data-theme="light"] .menu-sheet {
-  background: #ffffff;
-  border-color: var(--border);
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 1rem;
-  font-weight: 600;
-}
-.menu-item:last-of-type { border-bottom: none; }
-
-.menu-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px 0 8px;
-  color: var(--muted);
-  text-decoration: none;
-  transition: color .2s;
-}
-.menu-link:hover { color: var(--white); }
-html[data-theme="light"] .menu-link:hover { color: var(--black); }
-
-/* ================= HOME ================= */
 .home-content {
   display: flex;
   flex-direction: column;
@@ -313,7 +133,6 @@ html[data-theme="light"] .menu-link:hover { color: var(--black); }
   position: relative;
 }
 
-/* Green dot after "beep" — like a live indicator */
 .beep-pulse {
   display: inline-block;
   width: 15px;
@@ -330,12 +149,9 @@ html[data-theme="light"] .menu-link:hover { color: var(--black); }
   50% { transform: scale(1.25); }
 }
 
-.home-sub {
-  color: var(--muted);
-  font-size: 1rem;
-  margin-bottom: 40px;
-}
-
+/* =============================================
+   LAYOUT — Mode Grid
+   ============================================= */
 .mode-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -353,16 +169,19 @@ html[data-theme="light"] .menu-link:hover { color: var(--black); }
   cursor: pointer;
   transition: transform .2s, border-color .2s;
 }
+
 .mode-card:hover {
   transform: translateY(-3px);
   border-color: var(--green);
 }
 
 .mode-icon {
-  width: 40px; height: 40px;
+  width: 40px;
+  height: 40px;
   margin: 0 auto 14px;
   color: var(--green);
 }
+
 .mode-icon svg { width: 100%; height: 100%; }
 
 .mode-card h2 {
@@ -370,47 +189,179 @@ html[data-theme="light"] .menu-link:hover { color: var(--black); }
   font-weight: 700;
   margin-bottom: 4px;
 }
+
 .mode-card p {
   font-size: 0.78rem;
   color: var(--muted);
 }
 
-@media (max-width: 360px) {
-  .mode-grid { grid-template-columns: 1fr; }
+/* =============================================
+   COMPONENTS — Burger & Drawer
+   ============================================= */
+.burger {
+  width: 48px;
+  height: 48px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ================= CONFIG SCREENS (uniform) ================= */
+.burger:hover { border-color: var(--muted); }
+
+.burger.open { background: var(--black); border-color: var(--border); }
+
+.burger span {
+  position: absolute;
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: transform .3s ease, opacity .3s ease, top .3s ease, background .3s;
+}
+
+.burger span:nth-child(1) { top: 17px; left: 14px; }
+.burger span:nth-child(2) { top: 23px; left: 14px; }
+.burger span:nth-child(3) { top: 29px; left: 14px; }
+
+.burger.open span:nth-child(1) { top: 23px; transform: rotate(45deg); }
+.burger.open span:nth-child(2) { opacity: 0; transform: translateX(-4px); }
+.burger.open span:nth-child(3) { top: 23px; transform: rotate(-45deg); }
+
+.menu-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-start;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.menu-drawer.open { pointer-events: auto; }
+
+.menu-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.menu-drawer.open .menu-backdrop { opacity: 1; }
+
+.menu-sheet {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  width: min(300px, 80vw);
+  background: var(--card);
+  border-left: 1px solid var(--border);
+  padding: 80px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+.menu-drawer.open .menu-sheet { transform: translateX(0); }
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.menu-item:last-of-type { border-bottom: none; }
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0 8px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.menu-link:hover { color: var(--white); }
+
+/* =============================================
+   COMPONENTS — Toggle Switch
+   ============================================= */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #333333;
+  border: 1px solid #444444;
+  border-radius: 28px;
+  transition: .2s;
+}
+
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 2px;
+  bottom: 2px;
+  background: var(--white);
+  border-radius: 50%;
+  transition: .2s;
+}
+
+input:checked + .slider {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+input:checked + .slider::before {
+  transform: translateX(22px);
+  background: var(--black);
+}
+
+/* =============================================
+   COMPONENTS — Config Screens
+   ============================================= */
 .config-screen {
   display: flex;
   flex-direction: column;
   min-height: 100%;
   padding: 72px 20px 20px;
-}
-
-.config-screen > h2, .config-screen > p {
-  text-align: center;
-  width: 100%;
-  max-width: 320px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.config-title {
-  font-size: 1.7rem;
-  font-weight: 800;
-  margin-bottom: 6px;
-}
-
-.config-sub {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-bottom: 24px;
-}
-
-.config-desc {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-bottom: 16px;
 }
 
 .config-body {
@@ -420,6 +371,36 @@ html[data-theme="light"] .menu-link:hover { color: var(--black); }
   flex: 1;
 }
 
+.config-actions {
+  width: 100%;
+  max-width: 320px;
+  margin: 20px auto 0;
+  padding-bottom: 20px;
+}
+
+.config-actions.dual {
+  display: flex;
+  gap: 12px;
+}
+
+.config-actions.dual button { flex: 1; }
+
+.config-desc {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.config-total {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 8px 0 16px;
+}
+
+/* =============================================
+   COMPONENTS — Form Inputs
+   ============================================= */
 .field-row {
   display: flex;
   align-items: center;
@@ -427,6 +408,8 @@ html[data-theme="light"] .menu-link:hover { color: var(--black); }
   gap: 12px;
   margin-bottom: 14px;
 }
+
+.field-row:last-child { margin-bottom: 0; }
 
 .field-row label {
   font-size: 0.85rem;
@@ -445,64 +428,10 @@ html[data-theme="light"] .menu-link:hover { color: var(--black); }
   text-align: center;
   outline: none;
   transition: border-color .15s;
-  -moz-appearance: textfield;
   appearance: textfield;
 }
+
 .field-row input:focus { border-color: var(--green); }
-
-/* Toggle Switch */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 28px;
-  flex-shrink: 0;
-}
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: #333333;
-  border: 1px solid #444444;
-  border-radius: 28px;
-  transition: .2s;
-}
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 22px;
-  width: 22px;
-  left: 2px;
-  bottom: 2px;
-  background: var(--white);
-  border-radius: 50%;
-  transition: .2s;
-}
-input:checked + .slider {
-  background: var(--green);
-  border-color: var(--green);
-}
-input:checked + .slider:before {
-  transform: translateX(22px);
-  background: var(--black);
-}
-
-/* Repeat options panel */
-.repeat-options {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 14px;
-}
-.repeat-options .field-row:last-child {
-  margin-bottom: 0;
-}
 
 .field-row input::-webkit-outer-spin-button,
 .field-row input::-webkit-inner-spin-button {
@@ -515,31 +444,27 @@ input:checked + .slider:before {
   align-items: center;
   gap: 6px;
 }
+
 .time-inputs input { width: 56px; }
+
 .time-inputs span { color: var(--muted); font-weight: 700; }
 
-.config-total {
-  color: var(--muted);
-  font-size: 0.85rem;
-  text-align: center;
-  margin: 8px 0 16px;
+/* =============================================
+   COMPONENTS — Repeat / Options Panel
+   ============================================= */
+.repeat-options {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
 }
 
-/* Config action bar (sticky bottom) */
-.config-actions {
-  width: 100%;
-  max-width: 320px;
-  margin: 20px auto 0;
-  padding-bottom: 20px;
-}
+.repeat-options .field-row:last-child { margin-bottom: 0; }
 
-.config-actions.dual {
-  display: flex;
-  gap: 12px;
-}
-.config-actions.dual button { flex: 1; }
-
-/* ================= BUTTONS (uniform system) ================= */
+/* =============================================
+   COMPONENTS — Buttons
+   ============================================= */
 .btn-primary {
   width: 100%;
   padding: 14px;
@@ -554,6 +479,7 @@ input:checked + .slider:before {
   letter-spacing: 0.5px;
   transition: transform .15s, opacity .2s;
 }
+
 .btn-primary:hover { transform: translateY(-2px); opacity: 0.92; }
 
 .btn-ghost {
@@ -567,76 +493,29 @@ input:checked + .slider:before {
   cursor: pointer;
   transition: background .15s;
 }
+
 .btn-ghost:hover { background: var(--card); }
 
-/* Timer action bar (uniform across all timers) */
-.timer-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: auto;
-  padding-top: 24px;
-  padding-bottom: 20px;
-}
-
-/* Main action button (Start / Pause) - large, colored, same everywhere */
-.btn-main {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: var(--green);
-  color: var(--black);
-  border: none;
-  font-size: 1.1rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: transform .15s, box-shadow .2s, opacity .2s;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-.btn-main:hover {
-  transform: scale(1.04);
-  opacity: 0.92;
-}
-.btn-main:active {
-  transform: scale(0.96);
-}
-
-/* When paused / resume state */
-.btn-main.paused {
-  background: var(--yellow);
-}
-
-/* Circle side buttons (Reset, Lap) - small, ghost style */
-.btn-circle {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: var(--card);
-  color: var(--white);
-  border: 1px solid var(--border);
-  font-size: 0.85rem;
+.btn-add-step {
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto 20px;
+  padding: 14px;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background .15s, border-color .15s;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-.btn-circle:hover {
-  background: #1f1f1f;
-  border-color: var(--muted);
+  transition: border-color .2s, color .2s;
 }
 
-/* ================= TIMER SCREENS (uniform) ================= */
+.btn-add-step:hover { border-color: var(--green); color: var(--green); }
+
+/* =============================================
+   COMPONENTS — Timer Running Screen
+   ============================================= */
 .timer-screen {
   display: flex;
   flex-direction: column;
@@ -646,7 +525,6 @@ input:checked + .slider:before {
   text-align: center;
 }
 
-/* Top spacer / timeline area */
 .timer-top {
   min-height: 8vh;
   width: 100%;
@@ -664,6 +542,7 @@ input:checked + .slider:before {
   margin-bottom: 16px;
   color: var(--muted);
 }
+
 .phase-badge.effort { color: var(--red); }
 .phase-badge.countdown { color: var(--yellow); }
 
@@ -717,7 +596,66 @@ input:checked + .slider:before {
   color: var(--muted);
 }
 
-/* ================= LAP LIST ================= */
+/* =============================================
+   COMPONENTS — Timer Controls (Uniform)
+   ============================================= */
+.timer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 24px;
+  padding-bottom: 20px;
+}
+
+.btn-main {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--black);
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .2s, opacity .2s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.btn-main:hover { transform: scale(1.04); opacity: 0.92; }
+.btn-main:active { transform: scale(0.96); }
+.btn-main.paused { background: var(--yellow); }
+
+.btn-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--white);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.btn-circle:hover { background: #1f1f1f; border-color: var(--muted); }
+
+/* =============================================
+   COMPONENTS — Lap List
+   ============================================= */
 .laps-list {
   width: 100%;
   max-width: 300px;
@@ -735,9 +673,12 @@ input:checked + .slider:before {
   font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
 }
+
 .lap-row:last-child { border-bottom: none; }
 
-/* ================= COMPLEX CONFIG ================= */
+/* =============================================
+   COMPONENTS — Complex Steps
+   ============================================= */
 .complex-list {
   width: 100%;
   max-width: 460px;
@@ -774,6 +715,7 @@ input:checked + .slider:before {
   padding: 8px 10px;
   outline: none;
 }
+
 .step-card-header input[type="text"]:focus { border-color: var(--green); }
 
 .step-type-select {
@@ -812,11 +754,15 @@ input:checked + .slider:before {
   padding: 8px;
   text-align: center;
   outline: none;
-  -moz-appearance: textfield;
   appearance: textfield;
 }
+
 .step-card-body input::-webkit-outer-spin-button,
-.step-card-body input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.step-card-body input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .step-card-body input:focus { border-color: var(--green); }
 
 .step-actions {
@@ -826,7 +772,8 @@ input:checked + .slider:before {
 }
 
 .step-action-btn {
-  width: 30px; height: 30px;
+  width: 30px;
+  height: 30px;
   border-radius: 6px;
   border: none;
   background: var(--black);
@@ -838,27 +785,13 @@ input:checked + .slider:before {
   justify-content: center;
   transition: background .15s, color .15s;
 }
+
 .step-action-btn:hover { background: #252525; color: var(--white); }
 .step-action-btn.del:hover { background: var(--red); color: var(--white); }
 
-/* Add step button */
-.btn-add-step {
-  width: 100%;
-  max-width: 460px;
-  margin: 0 auto 20px;
-  padding: 14px;
-  border: 2px dashed var(--border);
-  border-radius: 12px;
-  background: transparent;
-  color: var(--muted);
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: border-color .2s, color .2s;
-}
-.btn-add-step:hover { border-color: var(--green); color: var(--green); }
-
-/* ================= TIMELINE ================= */
+/* =============================================
+   COMPONENTS — Timeline
+   ============================================= */
 .timeline-wrap {
   width: 100%;
   max-width: 700px;
@@ -872,6 +805,7 @@ input:checked + .slider:before {
   padding-bottom: 8px;
   scrollbar-width: none;
 }
+
 .timeline::-webkit-scrollbar { display: none; }
 
 .timeline-item {
@@ -892,6 +826,7 @@ input:checked + .slider:before {
   cursor: default;
   transition: all .25s ease;
 }
+
 .timeline-item .tl-dur {
   font-size: 0.78rem;
   font-weight: 700;
@@ -899,30 +834,100 @@ input:checked + .slider:before {
   color: var(--white);
   margin-top: 2px;
 }
+
 .timeline-item.active {
   background: var(--green);
   border-color: var(--green);
   color: var(--black);
   transform: scale(1.08);
 }
+
 .timeline-item.active .tl-dur { color: var(--black); }
+
 .timeline-item.active.effort {
   background: var(--red);
   border-color: var(--red);
 }
+
 .timeline-item.done { opacity: 0.4; }
 
-/* ================= ANIMATIONS ================= */
+/* =============================================
+   UTILITIES — Animations
+   ============================================= */
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.03); }
 }
+
 .pulsing { animation: pulse 1s infinite; }
 
-/* ================= RESPONSIVE ================= */
+/* =============================================
+   THEME — Light Mode Overrides
+   ============================================= */
+html[data-theme="light"] {
+  --black: #ffffff;
+  --white: #111111;
+  --card: #f5f5f5;
+  --border: #e0e0e0;
+  --muted: #777777;
+}
+
+html[data-theme="light"] header {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+html[data-theme="light"] .burger.open { background: #ffffff; border-color: #cccccc; }
+
+html[data-theme="light"] .menu-sheet {
+  background: #ffffff;
+  border-color: var(--border);
+}
+
+html[data-theme="light"] .menu-link:hover { color: var(--black); }
+
+html[data-theme="light"] .switch .slider { background: #cccccc; border-color: #cccccc; }
+html[data-theme="light"] .switch .slider::before { background: #ffffff; }
+html[data-theme="light"] input:checked + .slider { background: var(--green); border-color: var(--green); }
+html[data-theme="light"] input:checked + .slider::before { background: #ffffff; }
+
+html[data-theme="light"] .step-card {
+  background: #eeeeee;
+  border-color: var(--border);
+}
+
+html[data-theme="light"] .step-card-header input,
+html[data-theme="light"] .step-type-select,
+html[data-theme="light"] .step-card-body input {
+  background: #e0e0e0;
+  color: var(--white);
+  border-color: #cccccc;
+}
+
+html[data-theme="light"] .repeat-options {
+  background: #eeeeee;
+  border-color: var(--border);
+}
+
+html[data-theme="light"] .step-action-btn {
+  background: #e0e0e0;
+  color: var(--muted);
+}
+
+html[data-theme="light"] .timeline-item {
+  background: #eeeeee;
+  border-color: var(--border);
+}
+
+html[data-theme="light"] .laps-list .lap-row {
+  border-bottom-color: var(--border);
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
 @media (max-width: 480px) {
   .home-title { font-size: 2.4rem; }
-  .mode-grid { gap: 10px; }
+  .mode-grid { grid-template-columns: 1fr; }
   .mode-card { padding: 22px 12px; }
 
   .timer-screen { padding: 56px 16px 0; }

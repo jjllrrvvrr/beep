@@ -85,7 +85,11 @@
 <div class="config-body" style="justify-content:center;display:flex;flex-direction:column;align-items:center;min-height:30vh;">
 <p class="config-desc">Tap start and let it roll.</p>
 </div>
-<div class="config-actions"><button class="btn-primary" onclick="app.chrono.start()">Start</button></div>
+<div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="chronoCountdownToggle" onchange="document.getElementById('chronoCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
+<div class="repeat-options hidden" id="chronoCountdownOptions">
+<div class="field-row"><label>Duration</label><input type="number" id="chronoCountdownSec" value="5" min="1" max="30"></div>
+</div>
+    <div class="config-actions"><button class="btn-primary" onclick="app.chrono.start()">Start</button></div>
 </div>
 <div class="timer-screen hidden" id="chronoTimer">
 <div class="timer-top"></div>
@@ -107,7 +111,11 @@
 <div class="config-screen" id="countdownConfig">
 <div class="config-body">
 <div class="field-row"><label>Time</label><div class="time-inputs"><input type="number" id="cdMin" value="2" min="0" max="59"><span>:</span><input type="number" id="cdSec" value="0" min="0" max="59"></div></div>
-<p class="config-desc">Counts down to zero. Perfect for planks, holds, and timed exercises.</p>
+<div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="cdCountdownToggle" onchange="document.getElementById('cdCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
+<div class="repeat-options hidden" id="cdCountdownOptions">
+<div class="field-row"><label>Duration</label><input type="number" id="cdCountdownSec" value="5" min="1" max="30"></div>
+</div>
+    <p class="config-desc">Counts down to zero. Perfect for planks, holds, and timed exercises.</p>
 </div>
 <div class="config-actions"><button class="btn-primary" onclick="app.countdown.startFromConfig()">Start</button></div>
 </div>
@@ -131,7 +139,11 @@
 <div class="field-row"><label>Rounds</label><input type="number" id="roundCount" value="5" min="1" max="99"></div>
 <div class="field-row"><label>Duration</label><div class="time-inputs"><input type="number" id="roundDurMin" value="3" min="0" max="59"><span>:</span><input type="number" id="roundDurSec" value="0" min="1" max="59"></div></div>
 <div class="field-row"><label>Rest</label><div class="time-inputs"><input type="number" id="roundRestMin" value="1" min="0" max="59"><span>:</span><input type="number" id="roundRestSec" value="0" min="0" max="59"></div></div>
-<p class="config-desc">Each round has the same duration. Rest between rounds is optional.</p>
+<div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="roundCountdownToggle" onchange="document.getElementById('roundCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
+<div class="repeat-options hidden" id="roundCountdownOptions">
+<div class="field-row"><label>Duration</label><input type="number" id="roundCountdownSec" value="5" min="1" max="30"></div>
+</div>
+    <p class="config-desc">Each round has the same duration. Rest between rounds is optional.</p>
 <p class="config-total" id="roundTotal">Total: ~15 min</p>
 </div>
 <div class="config-actions"><button class="btn-primary" onclick="app.round.startFromConfig()">Start</button></div>
@@ -156,7 +168,10 @@
 <div class="field-row"><label>Work</label><div class="time-inputs"><input type="number" id="tabWorkMin" value="0" min="0" max="59"><span>:</span><input type="number" id="tabWorkSec" value="20" min="1" max="59"></div></div>
 <div class="field-row"><label>Rest</label><div class="time-inputs"><input type="number" id="tabRestMin" value="0" min="0" max="59"><span>:</span><input type="number" id="tabRestSec" value="10" min="1" max="59"></div></div>
 <div class="field-row"><label>Rounds</label><input type="number" id="tabRounds" value="8" min="1" max="99"></div>
-<div class="field-row"><label>Countdown</label><input type="number" id="tabCountdown" value="5" min="0" max="30"></div>
+<div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="tabCountdownToggle" onchange="document.getElementById('tabCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
+<div class="repeat-options hidden" id="tabCountdownOptions">
+<div class="field-row"><label>Duration</label><input type="number" id="tabCountdownSec" value="5" min="1" max="30"></div>
+</div>
 <div class="field-row"><label>Repeat</label><label class="switch"><input type="checkbox" id="tabRepeatToggle"><span class="slider"></span></label></div>
 <div class="repeat-options hidden" id="tabRepeatOptions">
 <div class="field-row"><label>Count</label><input type="number" id="tabRepeatCount" value="3" min="2" max="20"></div>
@@ -184,7 +199,10 @@
 <div class="config-screen" id="emomConfig">
 <div class="config-body">
 <div class="field-row"><label>Minutes</label><input type="number" id="emomMinutes" value="10" min="1" max="60"></div>
-<div class="field-row"><label>Countdown</label><input type="number" id="emomCountdown" value="5" min="0" max="30"></div>
+<div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="emomCountdownToggle" onchange="document.getElementById('emomCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
+<div class="repeat-options hidden" id="emomCountdownOptions">
+<div class="field-row"><label>Duration</label><input type="number" id="emomCountdownSec" value="5" min="1" max="30"></div>
+</div>
 <p class="config-desc">One round every 60 seconds.</p>
 <p class="config-total" id="emomTotal">Total: 10 min</p>
 </div>
@@ -208,7 +226,10 @@
 <div class="config-screen" id="complexConfig">
 <div class="config-body">
 <div class="complex-list" id="complexList"></div>
-<div class="field-row"><label>Countdown</label><input type="number" id="complexCountdown" value="5" min="0" max="30"></div>
+<div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="complexCountdownToggle" onchange="document.getElementById('complexCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
+<div class="repeat-options hidden" id="complexCountdownOptions">
+<div class="field-row"><label>Duration</label><input type="number" id="complexCountdownSec" value="5" min="1" max="30"></div>
+</div>
 <button class="btn-add-step" onclick="app.complex.addStepUI()">+ Add a step</button>
 </div>
 <div class="config-actions dual">
