@@ -927,8 +927,10 @@ html[data-theme="light"] .laps-list .lap-row {
    ============================================= */
 @media (max-width: 480px) {
   .home-title { font-size: 2.4rem; }
-  .mode-grid { grid-template-columns: 1fr; }
   .mode-card { padding: 22px 12px; }
+  .mode-icon { width: 36px; height: 36px; margin-bottom: 10px; }
+  .mode-card h2 { font-size: 1rem; }
+  .mode-card p { font-size: 0.72rem; }
 
   .timer-screen { padding: 56px 16px 0; }
   .btn-main { width: 100px; height: 100px; font-size: 1rem; }
