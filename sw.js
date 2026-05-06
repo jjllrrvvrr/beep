@@ -1,14 +1,14 @@
 const CACHE_NAME = 'beep-v1';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/apple-touch-icon.png',
-  '/favicon-32.png'
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './manifest.json',
+  './images/icon-192.png',
+  './images/icon-512.png',
+  './images/apple-touch-icon.png',
+  './images/favicon-32.png'
 ];
 
 self.addEventListener('install', (e) => {
@@ -30,9 +30,8 @@ self.addEventListener('fetch', (e) => {
     caches.match(e.request).then(response => {
       if (response) return response;
       return fetch(e.request).catch(() => {
-        // Offline fallback for HTML requests
         if (e.request.mode === 'navigate') {
-          return caches.match('/index.html');
+          return caches.match('./index.html');
         }
       });
     })

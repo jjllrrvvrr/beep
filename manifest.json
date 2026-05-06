@@ -2,7 +2,7 @@
   "name": "beep",
   "short_name": "beep",
   "description": "A minimalist sport timer for stopwatch, tabata, EMOM and custom workouts.",
-  "start_url": "/",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
