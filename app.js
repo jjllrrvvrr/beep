@@ -347,12 +347,16 @@ class RoundTimer {
     ['roundCount','roundDurMin','roundDurSec','roundRestMin','roundRestSec'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', () => this.updateTotal());
     });
+    document.getElementById('roundRestToggle')?.addEventListener('change', () => this.updateTotal());
   }
 
   updateTotal() {
     const rounds = parseInt(document.getElementById('roundCount')?.value || 1);
     const dur = (parseInt(document.getElementById('roundDurMin')?.value || 0) * 60) + parseInt(document.getElementById('roundDurSec')?.value || 0);
-    const rest = (parseInt(document.getElementById('roundRestMin')?.value || 0) * 60) + parseInt(document.getElementById('roundRestSec')?.value || 0);
+    const restOn = document.getElementById('roundRestToggle')?.checked || false;
+    const rest = restOn
+      ? (parseInt(document.getElementById('roundRestMin')?.value || 0) * 60) + parseInt(document.getElementById('roundRestSec')?.value || 0)
+      : 0;
     const total = (dur * rounds) + (rest * (rounds - 1));
     document.getElementById('roundTotal').textContent = `Total: ~${Math.ceil(total/60)} min`;
   }
@@ -360,7 +364,10 @@ class RoundTimer {
   startFromConfig() {
     this.roundCount = parseInt(document.getElementById('roundCount').value);
     this.roundDuration = (parseInt(document.getElementById('roundDurMin').value || 0) * 60) + parseInt(document.getElementById('roundDurSec').value || 0);
-    this.restDuration = (parseInt(document.getElementById('roundRestMin').value || 0) * 60) + parseInt(document.getElementById('roundRestSec').value || 0);
+    const restOn = document.getElementById('roundRestToggle')?.checked || false;
+    this.restDuration = restOn
+      ? (parseInt(document.getElementById('roundRestMin').value || 0) * 60) + parseInt(document.getElementById('roundRestSec').value || 0)
+      : 0;
 
     if (this.roundDuration <= 0) { alert('Round duration must be > 0'); return; }
 
@@ -860,6 +867,7 @@ class ComplexTimer {
     this.elapsed = 0;
     this.stepIdCounter = 1;
     this.countdown = 0;
+    this.flatSteps = [];
 
     this.phaseEl = document.getElementById('complexPhase');
     this.displayEl = document.getElementById('complexDisplay');
@@ -873,17 +881,31 @@ class ComplexTimer {
     this.configEl = document.getElementById('complexConfig');
     this.timerEl = document.getElementById('complexTimer');
 
-    this.addStep({ name: 'Warmup', type: 'work', min: 3, sec: 0 });
-    this.addStep({ name: 'Set 1', type: 'work', min: 1, sec: 30 });
-    this.addStep({ name: 'Rest', type: 'rest', min: 1, sec: 0 });
-    this.addStep({ name: 'Set 2', type: 'work', min: 1, sec: 30 });
-    this.addStep({ name: 'Rest', type: 'rest', min: 1, sec: 0 });
     this.renderList();
+  }
+
+
+
+  addGroup(data = {}) {
+    const group = {
+      id: this.stepIdCounter++,
+      kind: 'group',
+      name: data.name || 'Group',
+      repeat: data.repeat || 1,
+      steps: (data.steps || []).map((s, i) => ({
+        id: this.stepIdCounter++,
+        name: s.name || 'Step ' + i,
+        type: s.type || 'work',
+        duration: ((s.min || 0) * 60) + (s.sec || 30)
+      }))
+    };
+    this.steps.push(group);
   }
 
   addStep(data = {}) {
     this.steps.push({
       id: this.stepIdCounter++,
+      kind: 'step',
       name: data.name || 'Step ' + this.steps.length,
       type: data.type || 'work',
       duration: ((data.min || 0) * 60) + (data.sec || 30)
@@ -895,9 +917,17 @@ class ComplexTimer {
     this.renderList();
   }
 
-  removeStep(id) { this.steps = this.steps.filter(s => s.id !== id); this.renderList(); }
+  addGroupUI() {
+    this.addGroup({ name: 'New group', repeat: 2, steps: [
+      { name: 'Work', type: 'work', min: 0, sec: 30 },
+      { name: 'Rest', type: 'rest', min: 0, sec: 15 }
+    ] });
+    this.renderList();
+  }
 
-  moveStep(id, dir) {
+  removeItem(id) { this.steps = this.steps.filter(s => s.id !== id); this.renderList(); }
+
+  moveItem(id, dir) {
     const i = this.steps.findIndex(s => s.id === id);
     if (i < 0) return;
     const j = i + dir;
@@ -906,8 +936,56 @@ class ComplexTimer {
     this.renderList();
   }
 
-  updateStep(id, field, value) {
-    const s = this.steps.find(x => x.id === id);
+  updateGroup(id, field, value) {
+    const g = this.steps.find(x => x.id === id);
+    if (!g || g.kind !== 'group') return;
+    if (field === 'name') g.name = value;
+    else if (field === 'repeat') g.repeat = Math.max(1, parseInt(value) || 1);
+  }
+
+  toggleGroup(id) {
+    const el = document.getElementById(`group-body-${id}`);
+    if (!el) return;
+    el.classList.toggle('hidden');
+  }
+
+  addSubStep(groupId) {
+    const g = this.steps.find(x => x.id === groupId);
+    if (!g || g.kind !== 'group') return;
+    g.steps.push({ id: this.stepIdCounter++, name: 'New step', type: 'work', duration: 30 });
+    this.renderList();
+    const el = document.getElementById(`group-body-${groupId}`);
+    if (el) el.classList.remove('hidden');
+  }
+
+  removeSubStep(groupId, stepId) {
+    const g = this.steps.find(x => x.id === groupId);
+    if (!g || g.kind !== 'group') return;
+    g.steps = g.steps.filter(s => s.id !== stepId);
+    this.renderList();
+  }
+
+  moveSubStep(groupId, stepId, dir) {
+    const g = this.steps.find(x => x.id === groupId);
+    if (!g || g.kind !== 'group') return;
+    const i = g.steps.findIndex(s => s.id === stepId);
+    if (i < 0) return;
+    const j = i + dir;
+    if (j < 0 || j >= g.steps.length) return;
+    [g.steps[i], g.steps[j]] = [g.steps[j], g.steps[i]];
+    this.renderList();
+  }
+
+  updateSubStep(groupId, stepId, field, value) {
+    let s;
+    if (groupId === 0) {
+      // root step
+      s = this.steps.find(x => x.id === stepId);
+    } else {
+      const g = this.steps.find(x => x.id === groupId);
+      if (!g || g.kind !== 'group') return;
+      s = g.steps.find(x => x.id === stepId);
+    }
     if (!s) return;
     if (field === 'name') s.name = value;
     else if (field === 'type') s.type = value;
@@ -916,42 +994,112 @@ class ComplexTimer {
       const v = Math.min(59, Math.max(0, parseInt(value) || 0));
       s.duration = Math.floor(s.duration / 60) * 60 + v;
     }
+    if (field === 'type') this.renderList();
+  }
+
+  clearAll() { this.steps = []; this.stepIdCounter = 1; this.renderList(); }
+
+  computeItems() {
+    const items = [];
+    this.steps.forEach(s => {
+      if (s.kind === 'group') {
+        for (let r = 0; r < s.repeat; r++) {
+          s.steps.forEach(sub => items.push({ ...sub }));
+        }
+      } else {
+        items.push({ ...s });
+      }
+    });
+    return items;
   }
 
   renderList() {
     this.listEl.innerHTML = '';
     this.steps.forEach((s) => {
-      const div = document.createElement('div');
-      div.className = 'step-card';
-      const mins = Math.floor(s.duration / 60);
-      const secs = s.duration % 60;
-      div.innerHTML = `
-        <div class="step-card-header">
-          <input type="text" value="${s.name}" onchange="app.complex.updateStep(${s.id}, 'name', this.value)">
-          <select class="step-type-select" onchange="app.complex.updateStep(${s.id}, 'type', this.value)">
-            <option value="work" ${s.type === 'work' ? 'selected' : ''}>Work</option>
-            <option value="rest" ${s.type === 'rest' ? 'selected' : ''}>Rest</option>
-          </select>
-        </div>
-        <div class="step-card-body">
-          <div><label>Min</label><input type="number" value="${mins}" min="0" onchange="app.complex.updateStep(${s.id}, 'min', this.value)"></div>
-          <div><label>Sec</label><input type="number" value="${secs}" min="0" max="59" onchange="app.complex.updateStep(${s.id}, 'sec', this.value)"></div>
-          <div class="step-actions">
-            <button class="step-action-btn" onclick="app.complex.moveStep(${s.id}, -1)">&#8593;</button>
-            <button class="step-action-btn" onclick="app.complex.moveStep(${s.id}, 1)">&#8595;</button>
-            <button class="step-action-btn del" onclick="app.complex.removeStep(${s.id})">&#10005;</button>
+      if (s.kind === 'group') {
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'group-card';
+        groupDiv.dataset.itemId = s.id;
+        const totalDur = s.steps.reduce((a, st) => a + st.duration, 0);
+        const itemCount = s.steps.length * s.repeat;
+        const durStr = fmtTime(totalDur * s.repeat);
+        groupDiv.innerHTML = `
+          <div class="group-card-header" onclick="app.complex.toggleGroup(${s.id})">
+            <input type="text" class="group-name" value="${s.name}" onclick="event.stopPropagation()" onchange="app.complex.updateGroup(${s.id}, 'name', this.value)">
+            <span class="group-tag">Repeat ${s.repeat}x</span>
+            <span class="group-summary">${itemCount} steps · ${durStr}</span>
+            <div class="group-actions" onclick="event.stopPropagation()">
+              <button class="step-action-btn" onclick="app.complex.moveItem(${s.id}, -1)">&#8593;</button>
+              <button class="step-action-btn" onclick="app.complex.moveItem(${s.id}, 1)">&#8595;</button>
+              <button class="step-action-btn del" onclick="app.complex.removeItem(${s.id})">&#10005;</button>
+            </div>
           </div>
-        </div>
-      `;
-      this.listEl.appendChild(div);
+          <div class="group-card-body" id="group-body-${s.id}">
+            ${s.steps.map(sub => {
+              const mins = Math.floor(sub.duration / 60);
+              const secs = sub.duration % 60;
+              return `
+                <div class="step-card ${sub.type === 'work' ? 'step-work' : 'step-rest'}">
+                  <div class="step-card-header">
+                    <input type="text" value="${sub.name}" onchange="app.complex.updateSubStep(${s.id}, ${sub.id}, 'name', this.value)">
+                    <select class="step-type-select" onchange="app.complex.updateSubStep(${s.id}, ${sub.id}, 'type', this.value)">
+                      <option value="work" ${sub.type === 'work' ? 'selected' : ''}>Work</option>
+                      <option value="rest" ${sub.type === 'rest' ? 'selected' : ''}>Rest</option>
+                    </select>
+                    <div class="step-actions">
+                      <button class="step-action-btn" onclick="app.complex.moveSubStep(${s.id}, ${sub.id}, -1)">&#8593;</button>
+                      <button class="step-action-btn" onclick="app.complex.moveSubStep(${s.id}, ${sub.id}, 1)">&#8595;</button>
+                      <button class="step-action-btn del" onclick="app.complex.removeSubStep(${s.id}, ${sub.id})">&#10005;</button>
+                    </div>
+                  </div>
+                  <div class="step-card-body">
+                    <div><label>Min</label><input type="number" value="${mins}" min="0" onchange="app.complex.updateSubStep(${s.id}, ${sub.id}, 'min', this.value)"></div>
+                    <div><label>Sec</label><input type="number" value="${secs}" min="0" max="59" onchange="app.complex.updateSubStep(${s.id}, ${sub.id}, 'sec', this.value)"></div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+            <button class="btn-add-step" onclick="app.complex.addSubStep(${s.id})" style="margin-top:4px;">+ Add a step</button>
+            <div class="group-repeat-row">
+              <label>Repeat</label>
+              <input type="number" value="${s.repeat}" min="1" max="99" onchange="app.complex.updateGroup(${s.id}, 'repeat', this.value)">
+            </div>
+          </div>
+        `;
+        this.listEl.appendChild(groupDiv);
+      } else {
+        const mins = Math.floor(s.duration / 60);
+        const secs = s.duration % 60;
+        const div = document.createElement('div');
+        div.className = `step-card ${s.type === 'work' ? 'step-work' : 'step-rest'}`;
+        div.dataset.itemId = s.id;
+        div.innerHTML = `
+          <div class="step-card-header">
+            <input type="text" value="${s.name}" onchange="app.complex.updateSubStep(0, ${s.id}, 'name', this.value)">
+            <select class="step-type-select" onchange="app.complex.updateSubStep(0, ${s.id}, 'type', this.value)">
+              <option value="work" ${s.type === 'work' ? 'selected' : ''}>Work</option>
+              <option value="rest" ${s.type === 'rest' ? 'selected' : ''}>Rest</option>
+            </select>
+            <div class="step-actions" style="margin-left:auto;">
+              <button class="step-action-btn" onclick="app.complex.moveItem(${s.id}, -1)">&#8593;</button>
+              <button class="step-action-btn" onclick="app.complex.moveItem(${s.id}, 1)">&#8595;</button>
+              <button class="step-action-btn del" onclick="app.complex.removeItem(${s.id})">&#10005;</button>
+            </div>
+          </div>
+          <div class="step-card-body">
+            <div><label>Min</label><input type="number" value="${mins}" min="0" onchange="app.complex.updateSubStep(0, ${s.id}, 'min', this.value)"></div>
+            <div><label>Sec</label><input type="number" value="${secs}" min="0" max="59" onchange="app.complex.updateSubStep(0, ${s.id}, 'sec', this.value)"></div>
+          </div>
+        `;
+        this.listEl.appendChild(div);
+      }
     });
   }
 
-  clearAll() { this.steps = []; this.stepIdCounter = 1; this.renderList(); }
-
   renderTimeline() {
+    const list = (this.flatSteps && this.flatSteps.length > 0) ? this.flatSteps : this.steps;
     this.timelineEl.innerHTML = '';
-    this.steps.forEach((s, idx) => {
+    list.forEach((s, idx) => {
       const item = document.createElement('div');
       item.className = 'timeline-item';
       if (idx === this.currentStep) item.classList.add('active');
@@ -966,11 +1114,12 @@ class ComplexTimer {
   }
 
   startFromConfig() {
-    if (this.steps.length === 0) { alert('Add at least one step'); return; }
+    this.flatSteps = this.computeItems();
+    if (this.flatSteps.length === 0) { alert('Add at least one step'); return; }
     this.countdown = (document.getElementById('complexCountdownToggle')?.checked ? parseInt(document.getElementById('complexCountdownSec')?.value || 0) : 0);
     this.currentStep = 0;
     this.elapsed = 0;
-    this.totalDuration = this.steps.reduce((a, s) => a + s.duration, 0);
+    this.totalDuration = this.flatSteps.reduce((a, s) => a + s.duration, 0);
 
     this.configEl.classList.add('hidden');
     this.timerEl.classList.remove('hidden');
@@ -981,7 +1130,7 @@ class ComplexTimer {
       this.updateUI();
       this.engine.start();
     } else {
-      this.timeLeft = this.steps[0]?.duration || 0;
+      this.timeLeft = this.flatSteps[0]?.duration || 0;
       this.updateUI();
       this.engine.start();
     }
@@ -995,13 +1144,13 @@ class ComplexTimer {
       if (this.phase === 'countdown') {
         this.phase = 'active';
         this.currentStep = 0;
-        this.timeLeft = this.steps[0]?.duration || 0;
+        this.timeLeft = this.flatSteps[0]?.duration || 0;
         this.elapsed = 0;
         playBell();
       } else {
         this.currentStep++;
-        if (this.currentStep >= this.steps.length) { this.timeLeft = 0; this.updateUI(); return true; }
-        this.timeLeft = this.steps[this.currentStep].duration;
+        if (this.currentStep >= this.flatSteps.length) { this.timeLeft = 0; this.updateUI(); return true; }
+        this.timeLeft = this.flatSteps[this.currentStep].duration;
         playDing();
       }
     } else {
@@ -1012,7 +1161,7 @@ class ComplexTimer {
   }
 
   updateUI() {
-    const done = this.currentStep >= this.steps.length;
+    const done = this.currentStep >= this.flatSteps.length;
     if (done) {
       this.phaseEl.textContent = 'Done';
       this.phaseEl.className = 'phase-badge';
@@ -1047,8 +1196,8 @@ class ComplexTimer {
       return;
     }
 
-    const step = this.steps[this.currentStep];
-    const nextStep = this.steps[this.currentStep + 1];
+    const step = this.flatSteps[this.currentStep];
+    const nextStep = this.flatSteps[this.currentStep + 1];
 
     this.displayEl.textContent = fmtTime(this.timeLeft);
     this.phaseEl.textContent = step.name;
@@ -1059,7 +1208,7 @@ class ComplexTimer {
     this.progressEl.style.width = `${pct}%`;
     this.progressEl.style.background = step.type === 'work' ? 'var(--red)' : 'var(--green)';
 
-    this.stepEl.textContent = `Step ${this.currentStep + 1} / ${this.steps.length}`;
+    this.stepEl.textContent = `Step ${this.currentStep + 1} / ${this.flatSteps.length}`;
     this.totalEl.textContent = `${fmtTime(this.elapsed)} / ${fmtTime(this.totalDuration)}`;
     this.nextEl.textContent = nextStep ? `Up next: ${nextStep.name} (${fmtTime(nextStep.duration)})` : '';
 

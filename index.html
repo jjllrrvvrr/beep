@@ -16,6 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -52,27 +53,27 @@
   <h1 class="home-title">beep<span class="beep-pulse"></span></h1>
 <div class="mode-grid">
 <div class="mode-card" onclick="app.openMode('chrono')">
-<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+<div class="mode-icon"><span class="material-symbols-outlined">timer</span></div>
 <h2>Stopwatch</h2><p>Just let it run</p>
 </div>
 <div class="mode-card" onclick="app.openMode('countdown')">
-<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+<div class="mode-icon"><span class="material-symbols-outlined">hourglass</span></div>
 <h2>Countdown</h2><p>Set time and go</p>
 </div>
 <div class="mode-card" onclick="app.openMode('round')">
-<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h2l2-6 4 12 4-6 2 4h2"/></svg></div>
+<div class="mode-icon"><span class="material-symbols-outlined">restart_alt</span></div>
 <h2>Rounds</h2><p>Fixed time each round</p>
 </div>
 <div class="mode-card" onclick="app.openMode('tabata')">
-<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+<div class="mode-icon"><span class="material-symbols-outlined">avg_time</span></div>
 <h2>Tabata</h2><p>Intervals done right</p>
 </div>
 <div class="mode-card" onclick="app.openMode('emom')">
-<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg></div>
+<div class="mode-icon"><span class="material-symbols-outlined">more_time</span></div>
 <h2>EMOM</h2><p>Every Minute On the Minute</p>
 </div>
 <div class="mode-card" onclick="app.openMode('complex')">
-<div class="mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+<div class="mode-icon"><span class="material-symbols-outlined">history_toggle_off</span></div>
 <h2>Complex</h2><p>Build your own workout</p>
 </div>
 </div>
@@ -138,7 +139,10 @@
 <div class="config-body">
 <div class="field-row"><label>Rounds</label><input type="number" id="roundCount" value="5" min="1" max="99"></div>
 <div class="field-row"><label>Duration</label><div class="time-inputs"><input type="number" id="roundDurMin" value="3" min="0" max="59"><span>:</span><input type="number" id="roundDurSec" value="0" min="1" max="59"></div></div>
-<div class="field-row"><label>Rest</label><div class="time-inputs"><input type="number" id="roundRestMin" value="1" min="0" max="59"><span>:</span><input type="number" id="roundRestSec" value="0" min="0" max="59"></div></div>
+<div class="field-row"><label>Rest</label><label class="switch"><input type="checkbox" id="roundRestToggle" onchange="document.getElementById('roundRestOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
+<div class="repeat-options hidden" id="roundRestOptions">
+<div class="field-row"><label>Duration</label><div class="time-inputs"><input type="number" id="roundRestMin" value="1" min="0" max="59"><span>:</span><input type="number" id="roundRestSec" value="0" min="0" max="59"></div></div>
+</div>
 <div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="roundCountdownToggle" onchange="document.getElementById('roundCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
 <div class="repeat-options hidden" id="roundCountdownOptions">
 <div class="field-row"><label>Duration</label><input type="number" id="roundCountdownSec" value="5" min="1" max="30"></div>
@@ -230,7 +234,10 @@
 <div class="repeat-options hidden" id="complexCountdownOptions">
 <div class="field-row"><label>Duration</label><input type="number" id="complexCountdownSec" value="5" min="1" max="30"></div>
 </div>
+<div class="add-buttons">
 <button class="btn-add-step" onclick="app.complex.addStepUI()">+ Add a step</button>
+<button class="btn-add-group" onclick="app.complex.addGroupUI()">+ Add a group</button>
+</div>
 </div>
 <div class="config-actions dual">
 <button class="btn-ghost" onclick="app.complex.clearAll()">Clear all</button>

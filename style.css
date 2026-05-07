@@ -180,9 +180,18 @@ header {
   height: 40px;
   margin: 0 auto 14px;
   color: var(--green);
+  font-size: 40px;
 }
 
-.mode-icon svg { width: 100%; height: 100%; }
+.mode-icon svg, .mode-icon .material-symbols-outlined {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: inherit;
+  color: inherit;
+}
 
 .mode-card h2 {
   font-size: 1.1rem;
@@ -513,9 +522,120 @@ input:checked + .slider::before {
 
 .btn-add-step:hover { border-color: var(--green); color: var(--green); }
 
+.add-buttons {
+  display: flex;
+  gap: 10px;
+  max-width: 460px;
+  margin: 0 auto 20px;
+}
+.add-buttons .btn-add-step { margin: 0; flex: 1; }
+
+.btn-add-group {
+  flex: 1;
+  padding: 14px;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+.btn-add-group:hover { border-color: var(--yellow); color: var(--yellow); }
+
 /* =============================================
-   COMPONENTS — Timer Running Screen
+   COMPONENTS — Group Card
    ============================================= */
+.group-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.group-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px;
+  cursor: pointer;
+  transition: background .15s;
+  flex-wrap: wrap;
+}
+.group-card-header:hover { background: #1a1a1a; }
+.group-card-header .group-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--white);
+  background: transparent;
+  border: none;
+  outline: none;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.group-card-header .group-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--yellow);
+  background: rgba(252, 191, 22, 0.12);
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.group-card-header .group-summary {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: right;
+  margin-right: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.group-card-header .group-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.group-card-body {
+  padding: 14px;
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.group-card-body .step-card {
+  margin-bottom: 0;
+  border-radius: 10px;
+  background: var(--black);
+}
+.group-repeat-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+.group-repeat-row label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.group-repeat-row input[type="number"] {
+  width: 70px;
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--white);
+  font-size: 0.9rem;
+  padding: 8px;
+  text-align: center;
+  outline: none;
+}
+.group-repeat-row input[type="number"]:focus { border-color: var(--green); }
+
 .timer-screen {
   display: flex;
   flex-direction: column;
@@ -679,12 +799,6 @@ input:checked + .slider::before {
 /* =============================================
    COMPONENTS — Complex Steps
    ============================================= */
-.complex-list {
-  width: 100%;
-  max-width: 460px;
-  margin: 0 auto 12px;
-}
-
 .step-card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -695,6 +809,15 @@ input:checked + .slider::before {
   flex-direction: column;
   gap: 10px;
 }
+
+.step-card.step-work { border-left: 3px solid var(--red); }
+.step-card.step-rest { border-left: 3px solid var(--green); }
+
+.step-card.step-work .step-type-select { color: var(--red); border-color: rgba(187, 13, 61, 0.4); }
+.step-card.step-rest .step-type-select { color: var(--green); border-color: rgba(45, 199, 153, 0.4); }
+
+.step-card.step-work .step-card-body label { color: var(--red); }
+.step-card.step-rest .step-card-body label { color: var(--green); }
 
 .step-card-header {
   display: flex;
@@ -769,6 +892,7 @@ input:checked + .slider::before {
   display: flex;
   gap: 6px;
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 .step-action-btn {
@@ -784,6 +908,7 @@ input:checked + .slider::before {
   align-items: center;
   justify-content: center;
   transition: background .15s, color .15s;
+  flex-shrink: 0;
 }
 
 .step-action-btn:hover { background: #252525; color: var(--white); }
@@ -895,6 +1020,9 @@ html[data-theme="light"] .step-card {
   border-color: var(--border);
 }
 
+html[data-theme="light"] .step-card.step-work .step-type-select { color: var(--red); border-color: rgba(187, 13, 61, 0.4); }
+html[data-theme="light"] .step-card.step-rest .step-type-select { color: var(--green); border-color: rgba(45, 199, 153, 0.4); }
+
 html[data-theme="light"] .step-card-header input,
 html[data-theme="light"] .step-type-select,
 html[data-theme="light"] .step-card-body input {
@@ -921,6 +1049,12 @@ html[data-theme="light"] .timeline-item {
 html[data-theme="light"] .laps-list .lap-row {
   border-bottom-color: var(--border);
 }
+
+.step-card.dragging { opacity: 0.6; transform: scale(0.98); }
+.step-card.drop-target { border-color: var(--green); box-shadow: 0 0 0 2px rgba(45, 199, 153, 0.25); }
+
+.group-card.dragging { opacity: 0.6; transform: scale(0.98); }
+.group-card.drop-target { border-color: var(--green); box-shadow: 0 0 0 2px rgba(45, 199, 153, 0.25); }
 
 /* =============================================
    RESPONSIVE
