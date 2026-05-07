@@ -941,6 +941,7 @@ class ComplexTimer {
     if (!g || g.kind !== 'group') return;
     if (field === 'name') g.name = value;
     else if (field === 'repeat') g.repeat = Math.max(1, parseInt(value) || 1);
+    if (field === 'repeat') this.renderList();
   }
 
   toggleGroup(id) {
@@ -995,6 +996,7 @@ class ComplexTimer {
       s.duration = Math.floor(s.duration / 60) * 60 + v;
     }
     if (field === 'type') this.renderList();
+    if (field === 'min' || field === 'sec') this.renderList();
   }
 
   clearAll() { this.steps = []; this.stepIdCounter = 1; this.renderList(); }
