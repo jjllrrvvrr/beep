@@ -83,12 +83,12 @@
 <!-- STOPWATCH -->
 <section id="chronoView" class="view">
 <div class="config-screen" id="chronoConfig">
-<div class="config-body" style="justify-content:center;display:flex;flex-direction:column;align-items:center;min-height:30vh;">
-<p class="config-desc">Tap start and let it roll.</p>
-</div>
+<div class="config-body">
 <div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="chronoCountdownToggle" onchange="document.getElementById('chronoCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
 <div class="repeat-options hidden" id="chronoCountdownOptions">
 <div class="field-row"><label>Duration</label><input type="number" id="chronoCountdownSec" value="5" min="1" max="30"></div>
+</div>
+    <p class="config-desc">Tap start and let it roll.</p>
 </div>
     <div class="config-actions"><button class="btn-primary" onclick="app.chrono.start()">Start</button></div>
 </div>
@@ -172,14 +172,14 @@
 <div class="field-row"><label>Work</label><div class="time-inputs"><input type="number" id="tabWorkMin" value="0" min="0" max="59"><span>:</span><input type="number" id="tabWorkSec" value="20" min="1" max="59"></div></div>
 <div class="field-row"><label>Rest</label><div class="time-inputs"><input type="number" id="tabRestMin" value="0" min="0" max="59"><span>:</span><input type="number" id="tabRestSec" value="10" min="1" max="59"></div></div>
 <div class="field-row"><label>Rounds</label><input type="number" id="tabRounds" value="8" min="1" max="99"></div>
-<div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="tabCountdownToggle" onchange="document.getElementById('tabCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
-<div class="repeat-options hidden" id="tabCountdownOptions">
-<div class="field-row"><label>Duration</label><input type="number" id="tabCountdownSec" value="5" min="1" max="30"></div>
-</div>
 <div class="field-row"><label>Repeat</label><label class="switch"><input type="checkbox" id="tabRepeatToggle"><span class="slider"></span></label></div>
 <div class="repeat-options hidden" id="tabRepeatOptions">
 <div class="field-row"><label>Count</label><input type="number" id="tabRepeatCount" value="3" min="2" max="20"></div>
 <div class="field-row"><label>Rest between</label><div class="time-inputs"><input type="number" id="tabSeriesRestMin" value="1" min="0" max="59"><span>:</span><input type="number" id="tabSeriesRestSec" value="0" min="0" max="59"></div></div>
+</div>
+<div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="tabCountdownToggle" onchange="document.getElementById('tabCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
+<div class="repeat-options hidden" id="tabCountdownOptions">
+<div class="field-row"><label>Duration</label><input type="number" id="tabCountdownSec" value="5" min="1" max="30"></div>
 </div>
 <p class="config-total" id="tabTotal">Total: ~4 min</p>
 </div>
@@ -230,13 +230,13 @@
 <div class="config-screen" id="complexConfig">
 <div class="config-body">
 <div class="complex-list" id="complexList"></div>
-<div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="complexCountdownToggle" onchange="document.getElementById('complexCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
-<div class="repeat-options hidden" id="complexCountdownOptions">
-<div class="field-row"><label>Duration</label><input type="number" id="complexCountdownSec" value="5" min="1" max="30"></div>
-</div>
 <div class="add-buttons">
 <button class="btn-add-step" onclick="app.complex.addStepUI()">+ Add a step</button>
 <button class="btn-add-group" onclick="app.complex.addGroupUI()">+ Add a group</button>
+</div>
+<div class="field-row"><label>Countdown</label><label class="switch"><input type="checkbox" id="complexCountdownToggle" onchange="document.getElementById('complexCountdownOptions').classList.toggle('hidden', !this.checked)"><span class="slider"></span></label></div>
+<div class="repeat-options hidden" id="complexCountdownOptions">
+<div class="field-row"><label>Duration</label><input type="number" id="complexCountdownSec" value="5" min="1" max="30"></div>
 </div>
 </div>
 <div class="config-actions dual">
