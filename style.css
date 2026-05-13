@@ -1060,7 +1060,6 @@ html[data-theme="light"] .laps-list .lap-row {
    RESPONSIVE
    ============================================= */
 @media (max-width: 480px) {
-  .home-title { font-size: 2.4rem; }
   .mode-card { padding: 22px 12px; }
   .mode-icon { width: 36px; height: 36px; margin-bottom: 10px; }
   .mode-card h2 { font-size: 1rem; }
